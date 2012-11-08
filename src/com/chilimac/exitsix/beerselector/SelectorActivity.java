@@ -59,13 +59,20 @@ public class SelectorActivity extends Activity {
         			dialHeight = dialView.getHeight();
         			dialWidth = dialView.getWidth();
 
+        			// resize
 					Matrix resize = new Matrix();
-					scaleImage(resize);				
-				
+					resize.postScale((float)Math.min(dialWidth, dialHeight) / (float)imageOriginal.getWidth(), (float)Math.min(dialWidth, dialHeight) / (float)imageOriginal.getHeight());
+					imageScaled = Bitmap.createBitmap(imageOriginal, 0, 0, imageOriginal.getWidth(), imageOriginal.getHeight(), resize, false);
+					
+					// translate to the image view's center
+					float translateX = dialWidth / 2 - imageScaled.getWidth() / 2;
+					float translateY = dialHeight / 2 - imageScaled.getHeight() / 2;
+					matrix.postTranslate(translateX, translateY);
+					
 					dialView.setImageBitmap(imageScaled);
 					dialView.setImageMatrix(matrix);
         		}
-			}
+			} 
 
 
 		});
@@ -84,7 +91,7 @@ public class SelectorActivity extends Activity {
         	matrix.reset();
         }
 
-        detector = new GestureDetector(this, new MyGestureDetector());
+        detector = new GestureDetector(this, new MyGestureDetector()); 
         
         // there is no 0th quadrant, to keep it simple the first value gets ignored
         quadrantTouched = new boolean[] { false, false, false, false, false };
@@ -93,14 +100,7 @@ public class SelectorActivity extends Activity {
 
 	}
 	
-	private void scaleImage(Matrix resize) {
-		float sxValue = (float)Math.min(dialWidth, dialHeight) / (float)imageOriginal.getWidth();
-		float syValue = (float)Math.min(dialWidth, dialHeight) /(float) imageOriginal.getHeight();
-		
-		resize.postScale(sxValue,syValue);
-		imageScaled = Bitmap.createBitmap(imageOriginal, 0, 0, imageOriginal.getWidth(), imageOriginal.getHeight(), resize, false);
-	}
-	
+
 	/**
 	 * Rotate the dialer.
 	 * 
@@ -118,8 +118,22 @@ public class SelectorActivity extends Activity {
 	private double getAngle(double xTouch, double yTouch) {
 		double x = xTouch - (dialWidth / 2d);
 		double y = dialHeight - yTouch - (dialHeight / 2d);
-		
-		return Math.atan2(y, x);
+
+		switch (getQuadrant(x, y)) {
+			case 1:
+				return Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI;
+			
+			case 2:
+			case 3:
+				return 180 - (Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI);
+			
+			case 4:
+				return 360 + Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI;
+			
+			default:
+				// ignore, does not happen
+				return 0;
+		}
 	}
 	
 	/**

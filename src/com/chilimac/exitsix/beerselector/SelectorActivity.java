@@ -81,7 +81,7 @@ public class SelectorActivity extends Activity {
 	private void initializeEverybody() {
 
         if (imageOriginal == null) {
-        	imageOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.wheel);
+        	imageOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.spin);
         }
         
         if (matrix == null) {

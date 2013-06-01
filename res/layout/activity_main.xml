@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    	<ImageView
+    	    android:id="@+id/imageView_pointer"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	   android:layout_marginTop="10dp"
+    	    android:layout_centerHorizontal="true"
+    	    android:adjustViewBounds="true"
+    	    android:contentDescription="@string/pointer"
+    	    android:src="@drawable/arrow" >
+
+</ImageView>
+    	
+	<ImageView
+	    android:id="@+id/imageView_spinner"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_below="@drawable/arrow"
+	    android:contentDescription="@string/wheel"
+	    android:scaleType="matrix"
+	    android:src="@drawable/spin" >
+
+</ImageView>
+
+	<TextView
+	    android:id="@+id/resultView"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginBottom="10dp"
+	    android:layout_marginLeft="10dp"
+ 		style="@android:style/TextAppearance.Medium"
+	    android:ems="10"
+	    android:textIsSelectable="false" />
+
+	<Button
+		    android:id="@+id/dahButton"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentBottom="true"
+		    android:layout_centerHorizontal="true"
+		    android:text="What&apos;s On Tap?"
+		    android:textSize="20sp"
+		     android:onClick="listBeers" />
+		
+</RelativeLayout>

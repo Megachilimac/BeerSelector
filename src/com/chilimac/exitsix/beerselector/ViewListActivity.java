@@ -1,11 +1,9 @@
 package com.chilimac.exitsix.beerselector;
 
 import java.util.ArrayList;
-
+import java.util.List;
 import com.google.analytics.tracking.android.EasyTracker;
-
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -16,30 +14,33 @@ import android.widget.ListView;
 public class ViewListActivity extends Activity {
 
 	private ListView myBeerList;
+	private BeerDBHandler dbHandler;
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_list);
-	      EasyTracker.getInstance().activityStart(this); 
+	    EasyTracker.getInstance().activityStart(this); 
 		
+	    dbHandler = new BeerDBHandler(this);     
 		myBeerList = (ListView) findViewById(R.id.listView1);
-		String PREFS_NAME = "e6beerlist";
-	SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
-	
-	ArrayList<String> hackyList = new ArrayList<String>();
-	
-    for(int i = 1; i <= prefs.getAll().size(); i++) {    
-    	
-    	String defValue = "";
-    			String beer = prefs.getString(Integer.toString(i+1), defValue);
-		hackyList.add(beer);          
-    } 
-		
-	       ArrayAdapter<String> arrayAdapter =      
-	    	         new ArrayAdapter<String>(this,R.layout.mylist,hackyList);
-	       myBeerList.setAdapter(arrayAdapter);
+		displayListView();
 	}
 
+	private void displayListView()
+	{
+	
+		List<Beer> beerList = new ArrayList<Beer>();
+		
+		beerList = dbHandler.getAllBeers();
+		
+		ArrayAdapter<Beer> arrayAdapter =
+				new ArrayAdapter<Beer>(this,R.layout.mylist,beerList);  			
+
+		myBeerList.setAdapter(arrayAdapter);
+		
+	}
 
 
 	@Override

@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +20,7 @@ import org.jsoup.select.Elements;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
@@ -26,7 +28,7 @@ import android.util.Log;
 public class DataFeedService extends Service {
 
 	private static final String TAG = "DATAFEED_SERVICE";
-	ArrayList<String> beerList = new ArrayList<String>();
+	List<Beer> theBeers = new ArrayList<Beer>();
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -75,9 +77,9 @@ public class DataFeedService extends Service {
 			    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 			    SharedPreferences.Editor editor = settings.edit();
 			    int x = 1;  // simple index
-			    for(String beer : beerList)
+			    for(Beer theBeer : theBeers)
 			    {			    	
-			    	editor.putString(Integer.toString(x),beer);
+			    	editor.putString(Integer.toString(x),theBeer.getName());
 			    	x++;
 			    }
 
@@ -101,29 +103,40 @@ public class DataFeedService extends Service {
 
 private void processStream(InputStream in) {
 		
+		BeerDBHandler dbHandler = BeerSelectorApplication.getInstance().getDatabaseHandler();
+		
 		
 		try {
 			String StringFromInputStream = convertStreamToString(in);
 			
 			Document doc = Jsoup.parse(StringFromInputStream);
 			Elements brewers = doc.select("div[id^=beer-]");
+			
 			for(Element brewer : brewers)
 			{
-				Element brewerName = brewer.select("h4").first();
-				String brewtext = brewerName.text();
-				Log.d("BREWER",brewtext);
-			}
-			
-			Elements beers = doc.select("h1.beer-name");
-			
-			if(!beers.isEmpty()){
-				for(Element beer : beers)
-				{
-				String info = beer.text();
-				beerList.add(info);
 				
-				Log.d(TAG,info);}
+				Element brewerName = brewer.select("h4").first();
+				Log.d("BREWER: ",brewerName.text());
+				
+				Element beerName = brewer.select("h1.beer-name").first();
+				Log.d("BEER: ",beerName.text());
+				
+				Beer parsedBeer = new Beer(beerName.text(),brewerName.text(),null,null,null);
+				theBeers.add(parsedBeer);
+				dbHandler.addBeer(parsedBeer);
 			}
+			
+			
+//			Elements beers = doc.select("h1.beer-name");
+//			
+//			if(!beers.isEmpty()){
+//				for(Element beer : beers)
+//				{
+//				String info = beer.text();
+//				beerList.add(info);
+//				
+//				Log.d(TAG,info);}
+//			}
 			
 		} catch (IOException e) {
 			

@@ -6,7 +6,7 @@
     <string name="wheel">wheel</string>
     <string name="title_activity_view_list">On Tap</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_data_feed_service">DataFeedService</string>
 	<string name="button_title">Close</string>
+	<string name="whats_on_tap_">What\'s On Tap?</string>
 </resources>
